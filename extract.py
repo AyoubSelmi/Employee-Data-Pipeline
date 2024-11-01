@@ -71,7 +71,7 @@ def upload_to_gcs(bucket_name, source_file_path, destination_blob_name):
 
 if __name__=="__main__":
     # Generate data
-    num_records = 100_000
+    num_records = 999
     employee_data = generate_employee_data(num_records)
     df = pd.DataFrame(employee_data)
 

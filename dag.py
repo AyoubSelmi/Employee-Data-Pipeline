@@ -1,6 +1,7 @@
 from datetime import datetime,timedelta
 from airflow import DAG
 from airflow.operators.bash import BashOperator
+from airflow.providers.google.cloud.operators.datafusion import CloudDataFusionStartPipelineOperator
 
 default_args = {
     'owner':'airflow',
@@ -21,6 +22,14 @@ dag = DAG('extract_employee_data',
 
 with dag:
     run_script_task = BashOperator(
-        task_id = 'run_script',
+        task_id = 'extract_data',
         bash_command = 'python /home/airflow/gcs/dags/scripts/extract.py'
     )
+    start_pipeline = CloudDataFusionStartPipelineOperator(
+    location="us-west1",
+    pipeline_name="try_etl",
+    instance_name="datafusion-dev",
+    pipeline_timeout=1000,
+    task_id="start_datafusion_dev",
+    )
+    run_script_task>>start_pipeline
